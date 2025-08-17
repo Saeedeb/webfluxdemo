@@ -12,8 +12,8 @@ ALTER TABLE users
  ALTER TABLE users
      ADD COLUMN IF NOT EXISTS status varchar(255);
 
---  CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx
---      ON public.users USING btree
---      (email COLLATE pg_catalog."default" ASC NULLS LAST)
---  WITH (deduplicate_items=True)
---      TABLESPACE pg_default;
+ CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx
+     ON public.users USING btree
+     (email COLLATE pg_catalog."default" ASC NULLS LAST)
+ WITH (deduplicate_items=True)
+     TABLESPACE pg_default;

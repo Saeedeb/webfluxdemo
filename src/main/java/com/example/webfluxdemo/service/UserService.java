@@ -7,6 +7,7 @@ import com.example.webfluxdemo.model.User;
 import com.example.webfluxdemo.service.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,10 +20,13 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserMapper userMapper;
+    private final  PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository repository, UserMapper userMapper)  {
+    public UserService(UserRepository repository, UserMapper userMapper, PasswordEncoder passwordEncoder)  {
         this.repository = repository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     public Mono<User> findById(Integer id) {
@@ -34,6 +38,7 @@ public class UserService {
     public Mono<UserRegistrationResponse> save(Mono<UserRegistrationRequest> request) {
         return request.
                 map(userMapper::toUser).
+                map((user)->{ user.setPassword(passwordEncoder.encode(user.getPassword())); return user; }).
                 flatMap(repository::save).
                 map( u-> new UserRegistrationResponse(u.getEmail())).
                 doOnNext((x -> {
