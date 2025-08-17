@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'my_local_project'
+    metrics_path: '/manage/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8011']
+        labels:
+          service: 'spring-boot'
+          app: 'local-app'

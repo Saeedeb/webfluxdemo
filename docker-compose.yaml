@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.18
+    container_name: my_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: saeedEb
+      POSTGRES_PASSWORD: S@B205080
+      POSTGRES_DB: myProjectDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - F:\dbs\postgresDb\dbs:/var/lib/postgresql/data
