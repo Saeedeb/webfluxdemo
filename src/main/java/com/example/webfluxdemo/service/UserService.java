@@ -41,18 +41,18 @@ public class UserService {
                 map((user)->{ user.setPassword(passwordEncoder.encode(user.getPassword())); return user; }).
                 flatMap(repository::save).
                 map( u-> new UserRegistrationResponse(u.getEmail())).
-                doOnNext((x -> {
-                    log.info("Saving user {}",x.email );
-                }));
+                doOnNext(x ->log.info("Saving user {}",x.email ));
     }
-    public Mono<User> update(Integer id, Mono<User> user) {
+    public Mono<UserRegistrationResponse> update(Integer id, Mono<User> user) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("User not found with id " + id)))
                 .flatMap(existingUser -> user.map(newUser -> {
                      existingUser.setName(newUser.getName());
                      existingUser.setEmail(newUser.getEmail());
                      return existingUser;
-                 })).flatMap(repository::save);
+                 }))
+                .map( u-> new UserRegistrationResponse(u.getEmail())).
+                doOnNext(x ->log.info("Saving user {}",x.email ));
 
 
     }

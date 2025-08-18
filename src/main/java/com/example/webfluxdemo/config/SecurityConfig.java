@@ -15,18 +15,24 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         return http
                 .authorizeExchange(exchanges -> exchanges
-                        // آزاد برای همه
-                        .pathMatchers("/users").permitAll()
+                        // مسیرهای آزاد
+                        .pathMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/webjars/**").permitAll()
+                        .pathMatchers("/users/**").permitAll()
                         .pathMatchers("/manage/health", "/manage/info").permitAll()
                         .pathMatchers("/manage/prometheus").permitAll()
-                        // سایر اکچواتورها نیاز به احراز هویت
+                        // مسیرهای مدیریت
                         .pathMatchers("/manage/**").hasRole("ADMIN")
-                        // بقیه درخواست‌ها هم نیازمند auth
+                        // بقیه مسیرها auth لازم دارند
                         .anyExchange().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .anonymous(Customizer.withDefaults())
                 .build();
     }
 }
