@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface UserRepository extends ReactiveCrudRepository<User, Integer> {
-    Mono<User> findByName(String name);
+public interface UserRepository extends ReactiveCrudRepository<User, Long> {
+    Mono<User> findByUsername(String name);
 }

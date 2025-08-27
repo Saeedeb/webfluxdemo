@@ -4,11 +4,15 @@ import com.example.webfluxdemo.controller.dtos.UserRegistrationRequest;
 import com.example.webfluxdemo.controller.dtos.UserRegistrationResponse;
 import com.example.webfluxdemo.database.UserRepository;
 import com.example.webfluxdemo.model.User;
+import com.example.webfluxdemo.security.CustomUserDetails;
 import com.example.webfluxdemo.service.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -29,21 +33,36 @@ public class UserService {
 
     }
 
-    public Mono<User> findById(Integer id) {
+    public Mono<User> findById(Long id) {
         return repository.findById(id);
+    }
+    public Mono<User> findByUsername(String username) {
+        return repository.findByUsername(username);
     }
     public Flux<User> findAll() {
         return repository.findAll();
     }
+    @Transactional
     public Mono<UserRegistrationResponse> save(Mono<UserRegistrationRequest> request) {
-        return request.
-                map(userMapper::toUser).
-                map((user)->{ user.setPassword(passwordEncoder.encode(user.getPassword())); return user; }).
-                flatMap(repository::save).
-                map( u-> new UserRegistrationResponse(u.getEmail())).
-                doOnNext(x ->log.info("Saving user {}",x.email ));
+
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(auth ->{
+//                    Integer userId  =((CustomUserDetails) auth).getId();
+                    return request
+                            .map(userMapper::toUser)
+                            .map(user -> {
+                                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                                return user;
+                            })
+                            .flatMap(repository::save)
+                            .map( u-> new UserRegistrationResponse(u.getEmail()))
+                            .doOnNext(x ->log.info("Saving user {} ",x.email ));
+               // });
+
+
     }
-    public Mono<UserRegistrationResponse> update(Integer id, Mono<User> user) {
+    public Mono<UserRegistrationResponse> update(Long id, Mono<User> user) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("User not found with id " + id)))
                 .flatMap(existingUser -> user.map(newUser -> {
@@ -56,7 +75,7 @@ public class UserService {
 
 
     }
-    public Mono<User> partialUpdate(Integer id, Map<String, Object> updates) {
+    public Mono<User> partialUpdate(Long id, Map<String, Object> updates) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("User not found")))
                 .flatMap(existingUser -> {
@@ -74,7 +93,7 @@ public class UserService {
                     return repository.save(existingUser);
                 });
     }
-    public Mono<Void> deleteById(Integer id) {
+    public Mono<Void> deleteById(Long id) {
         return repository.deleteById(id);
     }
 }

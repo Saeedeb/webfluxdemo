@@ -11,6 +11,9 @@ public class UserRegistrationRequest {
     public String fullName;
     @Schema(description = "fullName is not required ",example = "ali@test.com")
     public String email;
+
+    @Schema(description = "fullName is not required ",example = "ali123")
+    public String username;
     @Schema(description = "password  is required" ,example = "Aa@1234567")
     @NotNull
     public String password;

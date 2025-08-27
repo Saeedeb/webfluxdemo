@@ -33,7 +33,7 @@ public class UserController {
     @Operation(summary = "Get user by ID", description = "Returns a single user")
     @ApiResponse(responseCode = "200", description = "Successful response")
     @GetMapping("/{id}")
-    public Mono<User> getUserById(@PathVariable Integer id) {
+    public Mono<User> getUserById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
@@ -45,15 +45,15 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public Mono<Void> deleteUser( @PathVariable Integer id) {
+    public Mono<Void> deleteUser( @PathVariable Long id) {
         return userService.deleteById(id);
     }
     @PutMapping("/{id}")
-    public Mono<UserRegistrationResponse> updateUser(@PathVariable Integer id, @Validated @RequestBody Mono<User> user) {
+    public Mono<UserRegistrationResponse> updateUser(@PathVariable Long id, @Validated @RequestBody Mono<User> user) {
         return userService.update(id,user);
     }
     @PatchMapping("/{id}")
-    public Mono<User> partialUpdateUser(@PathVariable Integer id, @RequestBody Map<String, Object> updates) {
+    public Mono<User> partialUpdateUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return  userService.partialUpdate(id, updates);
     }
 }

@@ -1,0 +1,12 @@
+--
+-- INSERT INTO users(name, email, username, password, status)
+-- VALUES( 'saeed', 'SaeedEB@Gmail.com', 'SaeedEB', '$2a$10$wa9z0goyeofSsJSuSY5tlugWHV8KUocxndNLLrgzZhivRaAd/8XJ.', 'ACTIVE')
+--
+--
+-- INSERT INTO public.roles(name)
+-- VALUES ('admin'),
+--        ('user');
+--
+-- INSERT INTO public.user_roles(
+--     user_id, role_id)
+-- VALUES (1, 1),(1, 2);

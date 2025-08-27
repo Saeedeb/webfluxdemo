@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
+import java.util.concurrent.Callable;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -34,13 +35,15 @@ public class UserServiceUnitTest {
 
     @Test
     void saveUser_success() {
+        //Runnable
+       // Callable
         UserRegistrationRequest dto = new UserRegistrationRequest();
         dto.fullName = "Ali";
         dto.email = "ali@example.com";
         dto.password = "pass";
         dto.confirmPassword = "pass";
 
-        User saved = new User(1, dto.fullName, dto.email, dto.password,"INACTIVE");
+        User saved = new User(1L, dto.email,dto.fullName, dto.email, dto.password,"INACTIVE");
 
         when(userMapper.toUser(any(UserRegistrationRequest.class))).thenReturn(saved);
         when(repository.save(any(User.class))).thenReturn(Mono.just(saved));
@@ -53,8 +56,8 @@ public class UserServiceUnitTest {
     @Test
     void findAllUsers_success() {
 
-        User user1 = new User(1, "Ali", "ali@example.com", "pass","ACTIVE");
-        User user2 = new User(2, "Sara", "sara@example.com", "pass2","ACTIVE");
+        User user1 = new User(1L,"ali@example.com", "ali", "ali@example.com", "pass","ACTIVE");
+        User user2 = new User(2L,"ali@example.com", "sara", "sara@example.com", "pass","ACTIVE");
 
 
 
@@ -66,4 +69,6 @@ public class UserServiceUnitTest {
                 .expectNextMatches(u -> u.getName().equals("Sara"))
                 .verifyComplete();
     }
+
+
 }
